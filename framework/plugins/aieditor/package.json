@@ -1,0 +1,16 @@
+{
+  "name": "@sokach-plugin/aieditor",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@vben/preferences": "workspace:*",
+    "aieditor": "^1.3.8",
+    "vue": "catalog:"
+  }
+}

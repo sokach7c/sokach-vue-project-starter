@@ -1,0 +1,23 @@
+@font-face {
+  font-family: '灵动指书手机字体';
+  font-style: normal;
+  font-weight: normal;
+  src: url('@/assets/fonts/灵动指书手机字体.ttf') format('truetype');
+}
+
+* {
+  font-family:
+    '灵动指书手机字体',
+    -apple-system,
+    blinkmacsystemfont,
+    'Segoe UI',
+    roboto,
+    'Helvetica Neue',
+    arial,
+    'Noto Sans',
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
+}

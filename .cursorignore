@@ -1,0 +1,89 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+# 忽略构建输出和编译产物
+build/            # 常见的构建输出目录
+dist/             # 常见的发行版目录
+out/              # 常见的输出目录
+bin/              # 常见的二进制文件目录
+obj/              # 常见的编译中间文件目录
+*.log             # 忽略所有日志文件 [<sup data-citation='{&quot;id&quot;:1,&quot;url&quot;:&quot;https://www.cursor-cn.org/docs/ignore-files&quot;,&quot;title&quot;:&quot;忽略文件&quot;,&quot;content&quot;:&quot;忽略文件 使用cursorignore和cursorindexinggnore控制Cursor的AI功能和索引可以访问哪些文件 Cursor 会读取并索引您的项目代码库，以支持其各项功能。您可以通过在根目录添加 cursorignore 文件，控制 Cursor 可以访问哪些目录和文件。 Cursor 会尽最大努力阻止对 cursorignore 文件中列出的文件的访问，包括： 代码库索引 通过 &quot;}'>1</sup>](https://www.cursor-cn.org/docs/ignore-files)[<sup data-citation='{&quot;id&quot;:3,&quot;url&quot;:&quot;https://cursor.document.top/docs/context/ignore-files/&quot;,&quot;title&quot;:&quot;忽略文件&quot;,&quot;content&quot;:&quot;忽略文件 要忽略要包含在 Cursor 功能中的文件，例如 代码库索引，您可以在项目根目录中使用 cursorignore 文件。它的工作方式与 gitignore 对 git 的工作方式相同。 cursorignore 尊重 gitignore。如果您已经有 gitignore，文件将默认被忽略。如果您想忽略其他文件，可以将它们添加到 cursorignore 文件中。 一个示例 cursori&quot;}'>3</sup>](https://cursor.document.top/docs/context/ignore-files/)[4]
+*.tmp             # 忽略临时文件
+*.cache           # 忽略缓存文件
+
+# 忽略依赖管理目录
+node_modules/     # Node.js 项目的依赖
+vendor/           # PHP, Go 等项目的依赖
+venv/             # Python 虚拟环境
+.bundle/          # Ruby Bundler 依赖
+
+# 忽略版本控制文件和 IDE/编辑器配置
+.git/             # Git 版本控制目录
+.gitignore        # .gitignore 文件本身（尽管Cursor默认会尊重.gitignore）
+.gitattributes
+.svn/             # SVN 版本控制目录
+.vscode/          # VS Code 编辑器配置
+.idea/            # IntelliJ IDEA 系列 IDE 配置
+*.swp             # Vim 交换文件
+*.swo             # Vim 交换文件
+
+# 忽略环境配置和敏感文件
+.env              # 环境变量文件
+.env.local
+.env.development
+.env.production
+*.key             # 密钥文件
+*.pem             # 证书文件
+*.pfx
+*.jks
+*.cer
+*.crt
+*.pub
+*.priv
+config.json       # 示例：忽略特定的配置文件，如果它包含敏感信息 [<sup data-citation='{&quot;id&quot;:3,&quot;url&quot;:&quot;https://cursor.document.top/docs/context/ignore-files/&quot;,&quot;title&quot;:&quot;忽略文件&quot;,&quot;content&quot;:&quot;忽略文件 要忽略要包含在 Cursor 功能中的文件，例如 代码库索引，您可以在项目根目录中使用 cursorignore 文件。它的工作方式与 gitignore 对 git 的工作方式相同。 cursorignore 尊重 gitignore。如果您已经有 gitignore，文件将默认被忽略。如果您想忽略其他文件，可以将它们添加到 cursorignore 文件中。 一个示例 cursori&quot;}'>3</sup>](https://cursor.document.top/docs/context/ignore-files/)[4]
+
+# 忽略测试覆盖率报告
+coverage/         # 常见的测试覆盖率报告目录
+reports/          # 常见的报告目录
+
+# 忽略大型二进制文件和媒体文件
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.ico
+*.svg
+*.webp
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.zip             # 压缩文件
+*.tar.gz
+*.rar
+*.7z
+*.pdf             # PDF 文档
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+
+# 忽略文档生成输出（如果不是核心代码）
+docs/build/
+docs/_build/
+
+# 忽略特定语言或框架的生成文件
+*.pyc             # Python 编译缓存文件
+__pycache__/      # Python 缓存目录
+.pytest_cache/    # Pytest 缓存
+target/           # Java Maven/Gradle 项目的编译输出
+build/            # Android 项目的构建输出
+Pods/             # iOS CocoaPods 依赖
+DerivedData/      # Xcode 派生数据
+
+# 如果有不需要AI分析的特定目录或文件，可以添加
+# 例如：
+# legacy/           # 遗留代码目录
+# experiments/      # 实验性代码目录
+.changeset         # 忽略changeset

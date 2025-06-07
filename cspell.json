@@ -52,7 +52,11 @@
     "vitepress",
     "vnode",
     "vueuse",
-    "yxxx"
+    "yxxx",
+    "sokach",
+    "aieditor",
+    "amap",
+    "plyr"
   ],
   "ignorePaths": [
     "**/node_modules/**",

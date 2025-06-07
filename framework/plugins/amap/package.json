@@ -1,0 +1,15 @@
+{
+  "name": "@sokach-plugin/amap",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
+    "vue": "catalog:"
+  }
+}

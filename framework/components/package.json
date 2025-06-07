@@ -1,0 +1,15 @@
+{
+  "name": "@sokach/components",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "vue": "catalog:",
+    "vue3-colorpicker": "^2.3.0"
+  }
+}

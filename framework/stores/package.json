@@ -1,0 +1,21 @@
+{
+  "name": "@sokach/stores",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    "default": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@sokach/api": "workspace:*",
+    "@vben/constants": "workspace:*",
+    "@vben/preferences": "workspace:*",
+    "@vben/stores": "workspace:*",
+    "@vben/types": "workspace:*",
+    "pinia": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  }
+}

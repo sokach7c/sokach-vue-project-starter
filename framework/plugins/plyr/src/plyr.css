@@ -1,0 +1,7 @@
+/* 导入 Plyr 官方样式 */
+@import 'plyr/dist/plyr.css';
+
+/* 自定义样式变量 */
+:root {
+  --plyr-color-main: red;
+}

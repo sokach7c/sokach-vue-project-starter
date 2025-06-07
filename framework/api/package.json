@@ -1,0 +1,20 @@
+{
+  "name": "@sokach/api",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    "default": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@vben/hooks": "workspace:*",
+    "@vben/preferences": "workspace:*",
+    "@vben/request": "workspace:*",
+    "@vben/stores": "workspace:*",
+    "@vben/types": "workspace:*",
+    "@vben/utils": "workspace:*",
+    "@vueuse/core": "catalog:"
+  }
+}

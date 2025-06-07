@@ -1,0 +1,54 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm vite build --mode production",
+    "build:analyze": "pnpm vite build --mode analyze",
+    "dev": "pnpm vite --mode development",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit --skipLibCheck"
+  },
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@ant-design/icons-vue": "catalog:",
+    "@sokach-plugin/aieditor": "workspace:*",
+    "@sokach-plugin/amap": "workspace:*",
+    "@sokach-plugin/codemirror": "workspace:*",
+    "@sokach-plugin/face": "workspace:*",
+    "@sokach-plugin/plyr": "workspace:*",
+    "@sokach-plugin/vue-data-ui": "workspace:*",
+    "@sokach/api": "workspace:*",
+    "@sokach/components": "workspace:*",
+    "@sokach/stores": "workspace:*",
+    "@vben/access": "workspace:*",
+    "@vben/common-ui": "workspace:*",
+    "@vben/constants": "workspace:*",
+    "@vben/hooks": "workspace:*",
+    "@vben/icons": "workspace:*",
+    "@vben/layouts": "workspace:*",
+    "@vben/locales": "workspace:*",
+    "@vben/plugins": "workspace:*",
+    "@vben/preferences": "workspace:*",
+    "@vben/request": "workspace:*",
+    "@vben/stores": "workspace:*",
+    "@vben/styles": "workspace:*",
+    "@vben/types": "workspace:*",
+    "@vben/utils": "workspace:*",
+    "@vueuse/core": "catalog:",
+    "ant-design-vue": "catalog:",
+    "ant-design-x-vue": "^1.2.4",
+    "dayjs": "catalog:",
+    "lodash-es": "catalog:",
+    "pinia": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "catalog:",
+    "unplugin-auto-import": "catalog:",
+    "unplugin-vue-components": "catalog:"
+  }
+}
