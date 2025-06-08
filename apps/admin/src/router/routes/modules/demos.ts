@@ -93,6 +93,14 @@ const routes: RouteRecordRaw[] = [
         path: '/demos/form',
         component: () => import('#/views/demos/antd/form.vue'),
       },
+      {
+        meta: {
+          title: 'Image',
+        },
+        name: 'Image',
+        path: '/demos/image',
+        component: () => import('#/views/demos/antd/image.vue'),
+      },
     ],
   },
 ];

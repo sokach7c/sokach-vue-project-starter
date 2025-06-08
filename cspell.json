@@ -56,7 +56,8 @@
     "sokach",
     "aieditor",
     "amap",
-    "plyr"
+    "plyr",
+    "cropperjs"
   ],
   "ignorePaths": [
     "**/node_modules/**",
