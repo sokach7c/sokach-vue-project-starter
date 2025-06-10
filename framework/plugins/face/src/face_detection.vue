@@ -32,9 +32,16 @@ interface Props {
   width?: number;
 }
 
+interface DetectionResult {
+  faceCount: number;
+  faceDetected: boolean;
+  imageData?: string; // 自动拍照的base64图片数据
+  results: Results;
+}
+
 interface Emits {
-  // 检测结果回调
-  (e: 'detection', results: Results): void;
+  // 检测结果回调（包含自动拍照数据）
+  (e: 'detection', data: DetectionResult): void;
   // 错误回调
   (e: 'error', error: Error): void;
   // 加载状态变化
@@ -44,13 +51,11 @@ interface Emits {
     e: 'cameraStatus',
     status: 'error' | 'running' | 'starting' | 'stopped',
   ): void;
-  // 拍照成功回调
-  (e: 'photoTaken', imageData: string): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   model: 'short',
-  minDetectionConfidence: 0.8,
+  minDetectionConfidence: 0.9,
   width: 640,
   height: 480,
   showBoundingBox: true,
@@ -73,6 +78,9 @@ const detectionCount = ref(0);
 const cameraStatus = ref<'error' | 'running' | 'starting' | 'stopped'>(
   'stopped',
 );
+const faceDetectionSuccess = ref(false);
+const successTimeout = ref<null | number>(null);
+const capturedImage = ref<string>('');
 
 // MediaPipe 实例
 let camera: Camera | null = null;
@@ -83,11 +91,6 @@ const containerStyle = computed(() => ({
   width: `${props.width}px`,
   height: `${props.height}px`,
 }));
-
-// 检查是否可以拍照（只有检测到一个人脸时才可以）
-const canTakePhoto = computed(() => {
-  return cameraStatus.value === 'running' && detectionCount.value === 1;
-});
 
 // 初始化人脸检测
 const initializeFaceDetection = async (): Promise<void> => {
@@ -126,8 +129,9 @@ const onResults = (results: Results): void => {
   try {
     const canvas = canvasRef.value;
     const ctx = canvas?.getContext('2d');
+    const video = videoRef.value;
 
-    if (!canvas || !ctx) {
+    if (!canvas || !ctx || !video) {
       return;
     }
 
@@ -136,21 +140,63 @@ const onResults = (results: Results): void => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
 
-    // 绘制检测结果
-    if (results.detections && results.detections.length > 0) {
-      detectionCount.value = results.detections.length;
+    const faceDetected = results.detections && results.detections.length > 0;
+    const faceCount = faceDetected ? results.detections.length : 0;
 
-      if (props.showBoundingBox) {
-        drawBoundingBoxes(ctx, results.detections, canvas);
-      }
-    } else {
-      detectionCount.value = 0;
+    // 更新检测计数
+    detectionCount.value = faceCount;
+
+    // 绘制检测结果
+    if (faceDetected && props.showBoundingBox) {
+      drawBoundingBoxes(ctx, results.detections, canvas);
     }
 
     ctx.restore();
 
-    // 发送检测结果
-    emit('detection', results);
+    // 准备检测结果数据
+    const detectionData: DetectionResult = {
+      results,
+      faceDetected,
+      faceCount,
+    };
+
+    // 自动拍照逻辑：只有检测到恰好一个人脸时才拍照
+    if (faceDetected && faceCount === 1) {
+      try {
+        // 创建新的canvas来生成照片（不包含人脸框）
+        const photoCanvas = document.createElement('canvas');
+        photoCanvas.width = props.width;
+        photoCanvas.height = props.height;
+        const photoCtx = photoCanvas.getContext('2d');
+
+        if (photoCtx) {
+          // 直接从视频元素绘制到新画布
+          photoCtx.drawImage(
+            video,
+            0,
+            0,
+            photoCanvas.width,
+            photoCanvas.height,
+          );
+
+          // 转换为base64
+          const imageData = photoCanvas.toDataURL('image/jpeg', 0.9);
+          detectionData.imageData = imageData;
+
+          // 保存拍照结果并显示检测成功状态
+          capturedImage.value = imageData;
+          faceDetectionSuccess.value = true;
+
+          // 发送检测结果（包含自动拍照数据）
+          emit('detection', detectionData);
+
+          // 拍照成功后停止检测, 将canvasRef.value的base64图片数据返回
+          stopDetection();
+        }
+      } catch (photoError) {
+        console.warn('自动拍照失败:', photoError);
+      }
+    }
   } catch (error_) {
     const errorObj =
       error_ instanceof Error ? error_ : new Error('处理检测结果时出错');
@@ -250,81 +296,19 @@ const stopDetection = (): void => {
   }
 };
 
+// 重置检测状态（用于重新开始检测）
+const resetDetection = (): void => {
+  faceDetectionSuccess.value = false;
+  capturedImage.value = '';
+  detectionCount.value = 0;
+};
+
 // 切换检测状态
 const toggleDetection = async (): Promise<void> => {
   if (cameraStatus.value === 'running') {
     stopDetection();
   } else {
     await startDetection();
-  }
-};
-
-// 拍照功能
-const takePhoto = (): {
-  error?: string;
-  imageData?: string;
-  success: boolean;
-} => {
-  try {
-    // 检查是否可以拍照
-    if (!canTakePhoto.value) {
-      let errorMsg = '';
-      if (cameraStatus.value !== 'running') {
-        errorMsg = '相机未运行';
-      } else if (detectionCount.value === 0) {
-        errorMsg = '未检测到人脸';
-      } else {
-        errorMsg = '检测到多个人脸，请确保只有一个人';
-      }
-
-      return {
-        success: false,
-        error: errorMsg,
-      };
-    }
-
-    const video = videoRef.value;
-    if (!video) {
-      return {
-        success: false,
-        error: '视频未初始化',
-      };
-    }
-
-    // 创建新的canvas来生成照片（不包含人脸框）
-    const photoCanvas = document.createElement('canvas');
-    photoCanvas.width = props.width;
-    photoCanvas.height = props.height;
-    const photoCtx = photoCanvas.getContext('2d');
-
-    if (!photoCtx) {
-      return {
-        success: false,
-        error: '无法创建照片画布',
-      };
-    }
-
-    // 直接从视频元素绘制到新画布（不包含人脸框）
-    photoCtx.drawImage(video, 0, 0, photoCanvas.width, photoCanvas.height);
-
-    // 转换为图片数据
-    const imageData = photoCanvas.toDataURL('image/jpeg', 0.9);
-
-    // 发送拍照成功事件
-    emit('photoTaken', imageData);
-
-    return {
-      success: true,
-      imageData,
-    };
-  } catch (error_) {
-    const errorMessage = error_ instanceof Error ? error_.message : '拍照失败';
-    console.error('拍照失败:', error_);
-
-    return {
-      success: false,
-      error: errorMessage,
-    };
   }
 };
 
@@ -362,6 +346,12 @@ onBeforeUnmount(() => {
     faceDetection.close();
     faceDetection = null;
   }
+
+  // 清理定时器
+  if (successTimeout.value) {
+    clearTimeout(successTimeout.value);
+    successTimeout.value = null;
+  }
 });
 
 // 暴露方法给父组件
@@ -369,12 +359,13 @@ defineExpose({
   startDetection,
   stopDetection,
   toggleDetection,
-  takePhoto,
+  resetDetection,
   isLoading: readonly(isLoading),
   error: readonly(error),
   detectionCount: readonly(detectionCount),
   cameraStatus: readonly(cameraStatus),
-  canTakePhoto: readonly(canTakePhoto),
+  faceDetectionSuccess: readonly(faceDetectionSuccess),
+  capturedImage: readonly(capturedImage),
 });
 </script>
 
@@ -401,6 +392,20 @@ defineExpose({
         playsinline
       ></video>
       <canvas ref="canvasRef" class="output-canvas"></canvas>
+
+      <!-- 人脸检测成功遮罩 -->
+      <div v-if="faceDetectionSuccess" class="success-overlay">
+        <div class="success-content">
+          <div class="success-icon">✓</div>
+          <p class="success-text">人脸检测成功！</p>
+
+          <!-- 拍照结果展示 -->
+          <div v-if="capturedImage" class="captured-photo">
+            <img :src="capturedImage" alt="拍照结果" class="captured-image" />
+            <p class="photo-caption">拍照结果</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -464,5 +469,106 @@ defineExpose({
 
 .error-overlay button:hover {
   background: #0056b3;
+}
+
+.success-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 60%);
+  backdrop-filter: blur(4px);
+  animation: fade-in-success 0.3s ease-in-out;
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 90vw;
+  max-height: 80vh;
+  padding: 24px;
+  overflow-y: auto;
+  color: white;
+  text-align: center;
+  background: rgb(34 197 94 / 90%);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 20%);
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 60px;
+  color: white;
+  background: rgb(22 163 74);
+  border-radius: 50%;
+  animation: scale-in 0.5s ease-out;
+}
+
+.success-text {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.success-subtext {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.captured-photo {
+  width: 100%;
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+.captured-image {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  border: 3px solid white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 30%);
+}
+
+.photo-caption {
+  margin: 12px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+@keyframes fade-in-success {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 </style>

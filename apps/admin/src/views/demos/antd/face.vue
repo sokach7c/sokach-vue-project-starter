@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FaceDetectionResults } from '@sokach-plugin/face';
+
 import { computed, ref } from 'vue';
 
 import { FaceDetection } from '@sokach-plugin/face';
@@ -22,9 +24,8 @@ const getFaceStatus = () => {
 };
 
 // 事件处理
-const onDetection = (results: Results) => {
-  faceCount.value = results.detections?.length || 0;
-  errorMsg.value = null; // 清除错误信息
+const onDetection = (results: FaceDetectionResults) => {
+  console.log(results);
 };
 
 const onError = (error: Error) => {

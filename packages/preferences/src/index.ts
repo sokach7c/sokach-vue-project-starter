@@ -9,7 +9,22 @@ import type { DeepPartial } from '@vben-core/typings';
  */
 
 function defineOverridesPreferences(preferences: DeepPartial<Preferences>) {
-  return preferences;
+  return {
+    ...preferences,
+    app: {
+      defaultAvatar:
+        'https://cdn.jsdelivr.net/gh/sokach7c/assets@1.0.1/logo/avatar.jpg',
+      name: 'Sokach Admin',
+    },
+    logo: {
+      source: 'https://cdn.jsdelivr.net/gh/sokach7c/assets@1.0.1/logo/logo.svg',
+    },
+    theme: {
+      mode: 'light',
+      radius: '0.5',
+      semiDarkSidebar: true,
+    },
+  };
 }
 
 export { defineOverridesPreferences };

@@ -59,7 +59,6 @@ const defaultPreferences: Preferences = {
     menuAlign: 'start',
     mode: 'fixed',
   },
-
   logo: {
     enable: true,
     fit: 'contain',

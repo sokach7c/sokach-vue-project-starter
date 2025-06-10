@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import type { AiEditorOptions } from 'aieditor';
 
-import {
-  computed,
-  defineModel,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  ref,
-  watch,
-} from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 import { usePreferences } from '@vben/preferences';
 
