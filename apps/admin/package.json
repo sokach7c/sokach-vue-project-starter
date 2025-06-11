@@ -17,7 +17,6 @@
     "@sokach-plugin/aieditor": "workspace:*",
     "@sokach-plugin/amap": "workspace:*",
     "@sokach-plugin/codemirror": "workspace:*",
-    "@sokach-plugin/cropper": "workspace:*",
     "@sokach-plugin/face": "workspace:*",
     "@sokach-plugin/plyr": "workspace:*",
     "@sokach-plugin/vue-data-ui": "workspace:*",
